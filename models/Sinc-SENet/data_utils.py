@@ -13,9 +13,8 @@ from joblib import Parallel, delayed
 import h5py
 import random
 
-LOGICAL_DATA_ROOT = '../data_logical/LA'
+LOGICAL_DATA_ROOT = '../../data/FMFCC_Audio_train'
 PHISYCAL_DATA_ROOT = '../data_physical'
-SELECTED_METHOD = 'A01'
 
 ASVFile = collections.namedtuple('ASVFile',
     ['speaker_id', 'file_name', 'path', 'sys_id', 'key'])
@@ -76,7 +75,6 @@ class ASVDataset(Dataset):
             # 'CC': 15
         }
         self.is_test = is_test
-        self.is_selected = 'selected' if SELECTED_METHOD != '' else 'full'
         self.is_train = is_train
         self.sysid_dict_inv = {v: k for k, v in self.sysid_dict.items()}
         self.data_root = data_root
@@ -88,7 +86,7 @@ class ASVDataset(Dataset):
             self.prefix, self.dset_name )+v1_suffix, 'flac')
         self.protocols_fname = os.path.join(self.protocols_dir,
             'ASVspoof2019.{}.cm.{}.txt'.format(track, self.protocols_fname))
-        self.cache_fname = 'cache_{}_{}_{}_{}_{}.npy'.format(self.dset_name, track, feature_name, dataset_sz, self.is_selected)
+        self.cache_fname = 'cache_{}_{}_{}_{}.npy'.format(self.dset_name, track, feature_name, dataset_sz)
         self.cache_matlab_fname = 'cache_{}_{}_{}_{}.mat'.format(
             self.dset_name, track, feature_name, dataset_sz)
         self.transform = transform
@@ -144,19 +142,8 @@ class ASVDataset(Dataset):
             sys_id=self.sysid_dict[tokens[3]],
             key=int(tokens[4] == 'bonafide'))
 
-    def _select_lines(self, lines):
-        new_lines = []
-        for line in lines:
-            tokens = line.strip().split(' ')
-            if tokens[3] == SELECTED_METHOD:
-                new_lines.append(line)
-        return new_lines
-
     def parse_protocols_file(self, protocols_fname):
         lines = open(protocols_fname).readlines()
-        # Selected one spoofing method for training:
-        if SELECTED_METHOD != '' and self.is_train:
-            lines = self._select_lines(lines)
 
         # training or evaluating.
         if self.is_test and self.dataset_sz:
