@@ -23,7 +23,7 @@ def calc_log_loss(target_file):
         y_gt = gt[item[0]]
         epsilon = 1e-30
 
-        log_loss += -(y_gt * math.log(y_hat + epsilon) + (1 - y_gt - epsilon) * math.log(1 - y_hat))
+        log_loss += -(y_gt * math.log(y_hat + epsilon) + (1 - y_gt) * math.log(1 - y_hat + epsilon))
 
     return log_loss / 20000.0
 
