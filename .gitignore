@@ -1,5 +1,5 @@
 .DS_Store
 data/
 .vscode/
-
+**/__pycache__
 *.rar
