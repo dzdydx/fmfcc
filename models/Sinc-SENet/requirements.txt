@@ -1,3 +1,0 @@
-soundfile
-librosa
-tensorboardX

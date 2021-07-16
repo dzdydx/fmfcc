@@ -1,13 +1,11 @@
 """
-    File: calc_log_loss.py
-    Description: Calculate log loss between given test result and ground truth.
+    File: test_log_loss_bias.py
+    Description: Test log loss bias after using generated ground truth.
     Author: dzdydx (sirly.liu@qq.com)
     All rights reserved.
-
-    Usage:
-        python calc_log_loss.py [path_to_target_JSON_file]
 """
 import json, math
+from pathlib import Path
 
 gt_path = '../results/ground_truth.json'
 with open(gt_path, 'r') as f:
@@ -27,10 +25,7 @@ def calc_log_loss(target_file):
 
     return log_loss / 20000.0
 
-if __name__ == '__main__':
-    import argparse
-    parser = argparse.ArgumentParser()
-    parser.add_argument("target", help="target JSON file to calculate log loss")
-    args = parser.parse_args()
-
-    print(calc_log_loss(args.target))
+results = Path('../results')
+for test_result in results.rglob("*.json"):
+    if str(test_result)[11:].startswith(('SE', 're')):
+        print(f'Calculating log loss of {str(test_result)[11:-5]}: \n{calc_log_loss(test_result)}')

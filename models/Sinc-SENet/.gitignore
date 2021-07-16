@@ -1,8 +1,0 @@
-det/
-fig/
-logs/
-res/
-models/
-outputs/
-*.npy
-__pychache__/
